@@ -1,6 +1,6 @@
 package com.example.websitesecondhand.dto;
 
-import com.example.websitesecondhand.entity.Role;
+import com.example.websitesecondhand.model.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
