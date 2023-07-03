@@ -1,9 +1,7 @@
 package com.example.websitesecondhand.service.impl;
 
 import com.example.websitesecondhand.dto.LoginReqDto;
-import com.example.websitesecondhand.dto.NewPasswordDto;
 import com.example.websitesecondhand.dto.RegisterReqDto;
-import com.example.websitesecondhand.exception.UserUnauthorizedException;
 import com.example.websitesecondhand.mapper.UserMapper;
 import com.example.websitesecondhand.model.User;
 import com.example.websitesecondhand.repository.UserRepository;
@@ -11,11 +9,7 @@ import com.example.websitesecondhand.service.AuthService;
 import com.example.websitesecondhand.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -48,25 +42,4 @@ public class AuthServiceImpl implements AuthService {
         return true;
     }
 
-
-    @Override
-    public void changePassword(NewPasswordDto newPasswordDto) {
-
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        Authentication authentication = securityContext.getAuthentication();
-
-        UserDetails principal = (UserDetails) authentication.getPrincipal();
-        String currentEmail = principal.getUsername();
-
-        User user = userRepository.findUserByUsername(currentEmail).orElseThrow(() ->
-                new UsernameNotFoundException("User not found"));
-        UserDetails userDetails = userService.loadUserByUsername(user.getUsername());
-        String encryptedPassword = userDetails.getPassword();
-        if (encoder.matches(newPasswordDto.getCurrentPassword(), encryptedPassword)) {
-            user.setPassword(encoder.encode(newPasswordDto.getNewPassword()));
-            userRepository.save(user);
-        } else {
-            throw new UserUnauthorizedException();
-        }
-    }
 }

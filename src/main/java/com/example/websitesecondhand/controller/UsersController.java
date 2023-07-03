@@ -7,8 +7,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,10 +29,11 @@ public class UsersController {
     @ApiResponse(responseCode = "403", description = "Forbidden")
     @ApiResponse(responseCode = "404", description = "Not found")
     @PostMapping("/users/set_password")
-    ResponseEntity<?> response(@RequestBody NewPasswordDto newPasswordDto) {
-        log.info("Request new password");
-        //todo
-        return ResponseEntity.ok().build();
+    ResponseEntity<Void> changeUserPassword(@RequestBody @Valid NewPasswordDto newPasswordDto) {
+        log.info("Request update password");
+        return userService.updateUserPassword(newPasswordDto)
+                ? ResponseEntity.ok().build()
+                : ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @Operation(summary = "Get info about authorize user")

@@ -5,6 +5,7 @@ import com.example.websitesecondhand.dto.RegisterReqDto;
 import com.example.websitesecondhand.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -28,7 +29,7 @@ public class AuthController {
     @ApiResponse(responseCode = "403", description = "Forbidden")
     @ApiResponse(responseCode = "404", description = "Not Found")
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody RegisterReqDto registerReqDto) {
+    public ResponseEntity<Void> register(@RequestBody @Valid RegisterReqDto registerReqDto) {
         log.info("Register new user: {}", registerReqDto.getUsername());
         return authService.register(registerReqDto)
                 ? ResponseEntity.status(HttpStatus.CREATED).build()
@@ -41,7 +42,7 @@ public class AuthController {
     @ApiResponse(responseCode = "403", description = "Forbidden")
     @ApiResponse(responseCode = "404", description = "Not Found")
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginReqDto loginReqDto) {
+    public ResponseEntity<?> login(@RequestBody @Valid LoginReqDto loginReqDto) {
         log.info("Authority user: {}", loginReqDto.getUsername());
         return authService.login(loginReqDto)
                 ? ResponseEntity.ok().build()
