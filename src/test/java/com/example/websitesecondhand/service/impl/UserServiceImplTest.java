@@ -2,6 +2,7 @@ package com.example.websitesecondhand.service.impl;
 
 import com.example.websitesecondhand.dto.NewPasswordDto;
 import com.example.websitesecondhand.dto.RegisterReqDto;
+import com.example.websitesecondhand.dto.UserDto;
 import com.example.websitesecondhand.model.Image;
 import com.example.websitesecondhand.model.Role;
 import com.example.websitesecondhand.model.User;
@@ -12,10 +13,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.stubbing.OngoingStubbing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -24,8 +31,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,6 +40,9 @@ class UserServiceImplTest {
     private UserRepository userRepository;
     @Mock
     private PasswordEncoder passwordEncoder;
+    @Mock
+    private Authentication authentication;
+
     @InjectMocks
     UserServiceImpl userService;
 
@@ -89,6 +98,21 @@ class UserServiceImplTest {
 
     @Test
     void findAuthUser() {
+        SecurityContext securityContext = mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContext);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+
+        when(authentication.getName()).thenReturn("UserName");
+        when(userRepository.findUserByUsername("UserName")).thenReturn(Optional.of(user));
+
+
+        User result = userService.findAuthUser();
+
+        verify(userRepository, times(1)).findUserByUsername("UserName");
+
+        assertNotNull(result);
+        assertEquals("UserName", result.getUsername());
+
     }
 
     @Test
@@ -98,4 +122,19 @@ class UserServiceImplTest {
     @Test
     void changeUserPassword() {
     }
+
+    @Test
+    void getUserDto() {
+        SecurityContext securityContext = mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContext);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+
+        when(authentication.getName()).thenReturn("UserName");
+        when(userRepository.findUserByUsername("UserName")).thenReturn(Optional.of(user));
+
+        UserDto userDtoTest = userService.getUserDto();
+
+        assertEquals(user.getFirstName(), userDtoTest.getFirstName());
+    }
+
 }

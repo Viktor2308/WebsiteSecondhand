@@ -8,12 +8,16 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
@@ -27,7 +31,6 @@ public class UsersController {
     @ApiResponse(responseCode = "200", description = "OK")
     @ApiResponse(responseCode = "401", description = "Unauthorized")
     @ApiResponse(responseCode = "403", description = "Forbidden")
-    @ApiResponse(responseCode = "404", description = "Not found")
     @PostMapping("/users/set_password")
     ResponseEntity<Void> changeUserPassword(@RequestBody @Valid NewPasswordDto newPasswordDto) {
         log.info("Request update password");
@@ -42,26 +45,36 @@ public class UsersController {
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(implementation = UserDto.class)))
     @ApiResponse(responseCode = "401", description = "Unauthorized")
-    @ApiResponse(responseCode = "403", description = "Forbidden")
-    @ApiResponse(responseCode = "404", description = "Not Found")
     @GetMapping("/users/me")
     public ResponseEntity<UserDto> getUser() {
         log.info("Request GET info about authorize user");
-        return ResponseEntity.ok().build(); //todo
+        return ResponseEntity.ok().body(userService.getUserDto());
     }
 
-    @Operation(summary = "Обновить информацию об авторизованном пользователе")
+    @Operation(summary = "Update info authorize user")
     @ApiResponse(responseCode = "200", description = "OK",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(implementation = UserDto.class)))
     @ApiResponse(responseCode = "204", description = "No Content")
     @ApiResponse(responseCode = "401", description = "Unauthorized")
-    @ApiResponse(responseCode = "403", description = "Forbidden")
-    @ApiResponse(responseCode = "404", description = "Not Found")
     @PatchMapping("/users/me")
     public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto) {
+        return ResponseEntity.ok().body(userService.updateUserDto(userDto));
+    }
 
-        return ResponseEntity.ok().build(); //todo
+    @Operation(summary = "Update avatar authorize user")
+    @ApiResponse(responseCode = "200", description = "OK",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = UserDto.class)))
+    @ApiResponse(responseCode = "204", description = "No Content")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @PatchMapping(value = "/users/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Void> updateUserAvatar(@RequestBody @NotBlank MultipartFile image) throws IOException {
+        log.info("Update avatar by user");
+        return userService.updateUserImage(image) != null
+                ? ResponseEntity.ok().build()
+                : ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 }
