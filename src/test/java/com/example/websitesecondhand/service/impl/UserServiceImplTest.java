@@ -7,6 +7,8 @@ import com.example.websitesecondhand.model.Image;
 import com.example.websitesecondhand.model.Role;
 import com.example.websitesecondhand.model.User;
 import com.example.websitesecondhand.repository.UserRepository;
+import org.bson.BsonBinarySubType;
+import org.bson.types.Binary;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -55,7 +57,7 @@ class UserServiceImplTest {
     public void init() {
         byte[] mockImage = {1, 2, 3};
         image.setId("222");
-        image.setImage(mockImage);
+        image.setImage(new Binary(BsonBinarySubType.BINARY, mockImage));
 
         user.setId(123);
         user.setUsername("UserName");
@@ -75,20 +77,6 @@ class UserServiceImplTest {
 
         newPasswordDto.setNewPassword("newPassword");
         newPasswordDto.setCurrentPassword("currentPassword");
-    }
-
-    @DisplayName("Test should return right UserDetails")
-    @Test
-    void shouldReturnUserByUsername() {
-        String username = "UserName";
-
-        when(userRepository.findUserByUsername(username)).thenReturn(Optional.of(user));
-
-        UserDetails userDetailsTest = userService.loadUserByUsername(username);
-
-        assertEquals(user.getUsername(), userDetailsTest.getUsername());
-        assertEquals(user.getPassword(), userDetailsTest.getPassword());
-
     }
 
 

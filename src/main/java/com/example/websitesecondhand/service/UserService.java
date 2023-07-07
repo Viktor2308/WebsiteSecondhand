@@ -11,12 +11,15 @@ import java.io.IOException;
 
 public interface UserService {
     User findAuthUser();
-    UserDetails loadUserByUsername(String username);
     boolean updateUserPassword(NewPasswordDto newPasswordDto);
+
     boolean checkIfValidOldPassword(final User user, final String oldPassword);
+
     void changeUserPassword(final User user, final String password);
+
     UserDto getUserDto();
+
     UserDto updateUserDto(UserDto userDto);
 
-    String updateUserImage(MultipartFile image) throws IOException;
+    void updateUserImage(MultipartFile image) throws IOException;
 }

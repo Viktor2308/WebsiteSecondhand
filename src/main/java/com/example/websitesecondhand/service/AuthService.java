@@ -5,6 +5,6 @@ import com.example.websitesecondhand.dto.LoginReqDto;
 import com.example.websitesecondhand.dto.RegisterReqDto;
 
 public interface AuthService {
-    boolean login(LoginReqDto loginReqDto);
-    boolean register(RegisterReqDto registerReqDTO);
+    Object authenticateUser(LoginReqDto loginReqDto);
+    Object register(RegisterReqDto registerReqDTO);
 }

@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,17 +24,12 @@ import java.io.IOException;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class UserServiceImpl implements UserService, UserDetailsService {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final ImageService imageService;
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findUserByUsername(username).orElseThrow(() ->
-                new UsernameNotFoundException("User with username " + username + " doesn't exist"));
-    }
 
     @Override
     public boolean updateUserPassword(NewPasswordDto newPasswordDto) {
@@ -50,9 +44,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public User findAuthUser() {
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentPrincipalName = authentication.getName();
-        return userRepository.findUserByUsername(currentPrincipalName).orElseThrow(() ->
+        User principal = (User) authentication.getPrincipal();
+        String username;
+        if (principal != null) {
+            username = ((UserDetails) principal).getUsername();
+        } else {
+            username = principal.toString();
+        }
+        return userRepository.findUserByUsername(username).orElseThrow(() ->
                 new UsernameNotFoundException("User doesn't exist"));
     }
 
@@ -69,8 +70,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public UserDto getUserDto() {
-        User user = findAuthUser();
-        return UserMapper.INSTANCE.userToUserDto(user);
+        User user = userRepository.findUserByUsername(findAuthUser().getUsername()).orElseThrow(() ->
+                new UsernameNotFoundException("User doesn't exist"));
+        UserDto userDto = UserMapper.INSTANCE.userToUserDto(user);
+        return userDto;
     }
 
     @Override
@@ -80,17 +83,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public String updateUserImage(MultipartFile file){
-        Image image = null;
+    public void updateUserImage(MultipartFile file) {
         try {
-            image = imageService.addImage(file);
+            Image image = imageService.addImage(file);
+            User user = findAuthUser();
+            user.setImage(image);
+            userRepository.save(user);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        User user = findAuthUser();
-        user.setImage(image);
-        userRepository.save(user);
-        return image.getId();
     }
 
 

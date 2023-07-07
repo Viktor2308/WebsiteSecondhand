@@ -22,20 +22,20 @@ public class ImageServiceImpl implements ImageService {
     @Override
     @Cacheable(value = "images", key = "#id")
     public Image getImage(String id) {
-        return imageRepository.findById(id).orElseThrow(()->
+        return imageRepository.findById(id).orElseThrow(() ->
                 new ImageException("Image not found"));
     }
 
     @Override
     @CachePut(value = "images", key = "#root.target.image.id")
-    public Image addImage(MultipartFile file){
+    public Image addImage(MultipartFile file) {
         Image image = new Image();
         try {
             image.setImage(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
+            image = imageRepository.save(image);
         } catch (IOException e) {
-            e.printStackTrace();
+           throw new ImageException("Image no found");
         }
-        image = imageRepository.save(image);
         return image;
     }
 }

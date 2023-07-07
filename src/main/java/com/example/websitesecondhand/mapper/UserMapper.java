@@ -25,9 +25,7 @@ public interface UserMapper {
 
     @Mapping(source = "email", target = "username")
     @Mapping(target = "image", ignore = true)
+    @Mapping(target = "role", ignore = true)
     User userDtoToUser(UserDto userDto);
 
-    @Mapping(target = "role", defaultValue = "USER")
-    @Mapping(target = "image", ignore = true)
-    User registerReqDtoToUser(RegisterReqDto registerReqDto);
 }

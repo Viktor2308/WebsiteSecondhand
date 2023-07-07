@@ -14,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,6 +23,7 @@ import java.io.IOException;
 
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
+@RequestMapping("/")
 @Slf4j
 @RequiredArgsConstructor
 public class UsersController {
@@ -32,6 +35,7 @@ public class UsersController {
     @ApiResponse(responseCode = "401", description = "Unauthorized")
     @ApiResponse(responseCode = "403", description = "Forbidden")
     @PostMapping("/users/set_password")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     ResponseEntity<Void> changeUserPassword(@RequestBody @Valid NewPasswordDto newPasswordDto) {
         log.info("Request update password");
         return userService.updateUserPassword(newPasswordDto)
@@ -46,7 +50,9 @@ public class UsersController {
                     schema = @Schema(implementation = UserDto.class)))
     @ApiResponse(responseCode = "401", description = "Unauthorized")
     @GetMapping("/users/me")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<UserDto> getUser() {
+        System.out.println(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         log.info("Request GET info about authorize user");
         return ResponseEntity.ok().body(userService.getUserDto());
     }
@@ -59,8 +65,10 @@ public class UsersController {
     @ApiResponse(responseCode = "204", description = "No Content")
     @ApiResponse(responseCode = "401", description = "Unauthorized")
     @PatchMapping("/users/me")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto) {
-        return ResponseEntity.ok().body(userService.updateUserDto(userDto));
+        userService.updateUserDto(userDto);
+        return ResponseEntity.ok().body(userDto);
     }
 
     @Operation(summary = "Update avatar authorize user")
@@ -71,10 +79,10 @@ public class UsersController {
     @ApiResponse(responseCode = "204", description = "No Content")
     @ApiResponse(responseCode = "401", description = "Unauthorized")
     @PatchMapping(value = "/users/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Void> updateUserAvatar(@RequestBody @NotBlank MultipartFile image) throws IOException {
         log.info("Update avatar by user");
-        return userService.updateUserImage(image) != null
-                ? ResponseEntity.ok().build()
-                : ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        userService.updateUserImage(image);
+        return  ResponseEntity.ok().build();
     }
 }
