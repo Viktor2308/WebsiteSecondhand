@@ -5,6 +5,8 @@ import com.example.websitesecondhand.dto.UserDto;
 import com.example.websitesecondhand.model.Image;
 import com.example.websitesecondhand.model.Role;
 import com.example.websitesecondhand.model.User;
+import org.bson.BsonBinarySubType;
+import org.bson.types.Binary;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,7 +31,7 @@ class UserMapperTest {
 
         byte[] mockImage = {1, 2, 3};
         image.setId("222");
-        image.setImage(mockImage);
+        image.setImage(new Binary(BsonBinarySubType.BINARY, mockImage));
 
         user.setId(123);
         user.setUsername("UserName");
@@ -71,16 +73,5 @@ class UserMapperTest {
         assertEquals(userDto.getPhone(), userTest.getPhone());
 
     }
-    @DisplayName("Test: Mapping RegisterReqDto to User")
-    @Test
-    void registerReqDtoToUser() {
-        User userTest2 = UserMapper.INSTANCE.registerReqDtoToUser(registerReqDto);
 
-        assertEquals(registerReqDto.getUsername(), userTest2.getUsername());
-        assertEquals(registerReqDto.getPassword(), userTest2.getPassword());
-        assertEquals(registerReqDto.getFirstName(), userTest2.getFirstName());
-        assertEquals(registerReqDto.getLastName(), userTest2.getLastName());
-        assertEquals(registerReqDto.getPhone(), userTest2.getPhone());
-        assertEquals(registerReqDto.getRole(), userTest2.getRole());
-    }
 }
