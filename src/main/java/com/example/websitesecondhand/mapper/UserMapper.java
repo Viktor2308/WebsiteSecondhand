@@ -1,6 +1,5 @@
 package com.example.websitesecondhand.mapper;
 
-import com.example.websitesecondhand.dto.RegisterReqDto;
 import com.example.websitesecondhand.dto.UserDto;
 import com.example.websitesecondhand.model.Image;
 import com.example.websitesecondhand.model.User;

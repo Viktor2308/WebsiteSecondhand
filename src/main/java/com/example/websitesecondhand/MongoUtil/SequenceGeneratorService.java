@@ -3,7 +3,6 @@ package com.example.websitesecondhand.MongoUtil;
 import com.example.websitesecondhand.model.DatabaseSequence;
 import lombok.AllArgsConstructor;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
