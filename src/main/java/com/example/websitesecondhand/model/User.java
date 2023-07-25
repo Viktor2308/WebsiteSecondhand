@@ -21,7 +21,6 @@ import java.util.Collections;
 public class User implements UserDetails {
     @Transient
     public static final String SEQUENCE_NAME = "users_sequence";
-
     @Id
     private long id;
     @Indexed(unique = true)
@@ -34,9 +33,8 @@ public class User implements UserDetails {
     private String phone;
     private Role role;
     private Image image;
-
-    //Collections<Ads>
-    //Collections<Comments>
+    private Collection<Ads> adsCollections;
+    private Collection<Comment> commentsCollections;
     public User(long id, String username, String email, String password,
                 Role role) {
         this.id = id;

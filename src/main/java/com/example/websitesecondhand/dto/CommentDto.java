@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CommentDto {
+    private long pk;
     private long author;
     private String authorImage;
     private String authorFirstName;
     private int createdAt;
-    private long pk;
     private String text;
 }
