@@ -49,12 +49,4 @@ class CommentMapperTest {
         assertEquals(comment.getText(), commentDtoTest.getText());
         assertEquals(0L, commentDtoTest.getCreatedAt());
     }
-
-    @Test
-    void createdAt() {
-    }
-
-    @Test
-    void getImage() {
-    }
 }
