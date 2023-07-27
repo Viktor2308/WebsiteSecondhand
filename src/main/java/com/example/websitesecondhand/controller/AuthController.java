@@ -1,19 +1,16 @@
 package com.example.websitesecondhand.controller;
 
 import com.example.websitesecondhand.dto.LoginReqDto;
-import com.example.websitesecondhand.dto.MessageResponse;
 import com.example.websitesecondhand.dto.RegisterReqDto;
 import com.example.websitesecondhand.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @CrossOrigin(value = "http://localhost:3000")
 @RestController

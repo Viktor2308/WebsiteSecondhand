@@ -5,6 +5,7 @@ import com.example.websitesecondhand.model.Image;
 import com.example.websitesecondhand.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.factory.Mappers;
 
@@ -14,11 +15,12 @@ public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
     @Mapping(source = "username", target = "email")
+    @Mapping(target = "image", source = "image", qualifiedByName = "imageMapper")
     UserDto userToUserDto(User user);
-
-    default String imageToString(Image image) {
+    @Named("imageMapper")
+    default String imageToString(String image) {
         return image != null
-                ? "/users/" + image.getId() + "/image"
+                ? "/users/" + image + "/image"
                 : null;
     }
 
