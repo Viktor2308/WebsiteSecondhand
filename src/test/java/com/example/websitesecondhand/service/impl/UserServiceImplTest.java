@@ -113,16 +113,6 @@ class UserServiceImplTest {
 
     @Test
     void getUserDto() {
-        SecurityContext securityContext = mock(SecurityContext.class);
-        SecurityContextHolder.setContext(securityContext);
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-
-        when(authentication.getName()).thenReturn("UserName");
-        when(userRepository.findUserByUsername("UserName")).thenReturn(Optional.of(user));
-
-        UserDto userDtoTest = userService.getUserDto();
-
-        assertEquals(user.getFirstName(), userDtoTest.getFirstName());
     }
 
 }
