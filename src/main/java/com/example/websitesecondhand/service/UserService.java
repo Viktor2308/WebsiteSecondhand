@@ -3,6 +3,7 @@ package com.example.websitesecondhand.service;
 import com.example.websitesecondhand.dto.NewPasswordDto;
 import com.example.websitesecondhand.dto.UserDto;
 import com.example.websitesecondhand.model.User;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,7 +18,7 @@ public interface UserService {
 
     void changeUserPassword(final User user, final String password);
 
-    UserDto getUserDto();
+    UserDto getUserDto(Authentication auth);
 
     UserDto updateUserDto(UserDto userDto);
 

@@ -1,6 +1,7 @@
 package com.example.websitesecondhand.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,14 +18,13 @@ import java.util.Collections;
 @Document(collection = "users")
 @Getter
 @Setter
+@EqualsAndHashCode
 @NoArgsConstructor
 public class User implements UserDetails {
     @Transient
     public static final String SEQUENCE_NAME = "users_sequence";
-
     @Id
     private long id;
-    @Indexed(unique = true)
     private String username;
     private String email;
     @JsonIgnore
@@ -33,10 +33,9 @@ public class User implements UserDetails {
     private String lastName;
     private String phone;
     private Role role;
-    private Image image;
-
-    //Collections<Ads>
-    //Collections<Comments>
+    private String image;
+    private Collection<Ads> adsCollections;
+    private Collection<Comment> commentsCollections;
     public User(long id, String username, String email, String password,
                 Role role) {
         this.id = id;

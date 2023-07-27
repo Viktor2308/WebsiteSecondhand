@@ -69,10 +69,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getUserDto() {
-        User user = userRepository.findUserByUsername(findAuthUser().getUsername()).orElseThrow(() ->
+    public UserDto getUserDto(Authentication authentication) {
+        User user = userRepository.findUserByUsername(authentication.getName()).orElseThrow(() ->
                 new UsernameNotFoundException("User doesn't exist"));
         UserDto userDto = UserMapper.INSTANCE.userToUserDto(user);
+        log.info("User DTO: {}", userDto.toString());
         return userDto;
     }
 
@@ -84,15 +85,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateUserImage(MultipartFile file) {
-        try {
-            Image image = imageService.addImage(file);
-            User user = findAuthUser();
-            user.setImage(image);
-            userRepository.save(user);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        log.info("New avatar {}", file.getName());
+        User user = findAuthUser();
+        Image newImage;
+        if (userRepository.findUserByUsername(user.getUsername()).get().getImage() == null) {
+            newImage = imageService.saveImage(file);
+        } else {
+            newImage = imageService.updateImage(file, user.getImage());
         }
+        user.setImage(newImage.getId());
+        userRepository.save(user);
     }
-
-
 }

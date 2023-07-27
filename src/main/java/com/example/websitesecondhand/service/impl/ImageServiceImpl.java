@@ -7,35 +7,46 @@ import com.example.websitesecondhand.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class ImageServiceImpl implements ImageService {
-    private final ImageRepository imageRepository;
+    private final ImageRepository repository;
 
     @Override
-    @Cacheable(value = "images", key = "#id")
-    public Image getImage(String id) {
-        return imageRepository.findById(id).orElseThrow(() ->
-                new ImageException("Image not found"));
+    public Image saveImage(MultipartFile image) {
+        Image newImage = new Image();
+        try{
+            byte[] bytes = image.getBytes();
+            newImage.setImage(new Binary(BsonBinarySubType.BINARY, bytes));
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+        newImage.setId(UUID.randomUUID().toString());
+        return repository.save(newImage);
     }
 
     @Override
-    @CachePut(value = "images", key = "#root.target.image.id")
-    public Image addImage(MultipartFile file) {
-        Image image = new Image();
+    public Image updateImage(MultipartFile newImage, String oldImageID) {
+        Image oldImage = repository.findById(oldImageID).orElseThrow(() -> new ImageException("Image exception"));
         try {
-            image.setImage(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
-            image = imageRepository.save(image);
-        } catch (IOException e) {
-           throw new ImageException("Image no found");
+            byte[] bytes = newImage.getBytes();
+            oldImage.setImage(new Binary(BsonBinarySubType.BINARY, bytes));
+        }catch (IOException e){
+            e.printStackTrace();
         }
-        return image;
+        return repository.save(oldImage);
+    }
+
+    @Override
+    public byte[] getImage(String id) {
+        Image image = repository.findById(id).orElseThrow(() -> new ImageException("Image exception"));
+        return image.getImage().getData();
     }
 }
+

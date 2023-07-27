@@ -30,8 +30,7 @@ public class AdsController {
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     array = @ArraySchema(schema = @Schema(implementation = ResponseWrapperAdsDto[].class))
-            )
-    )
+            ))
     @GetMapping("/ads")
     public ResponseEntity<ResponseWrapperAdsDto> getAllAds() {
         return ResponseEntity.ok(adsService.getAllAdsDto());
@@ -109,7 +108,5 @@ public class AdsController {
         adsService.updateImageAdsDto(adsId, image);
         return ResponseEntity.ok().build();
     }
-
-
 }
 

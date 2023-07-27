@@ -1,15 +1,16 @@
 package com.example.websitesecondhand.dto;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.NotBlank;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDto {
-    private long id;
+    private int id;
     @NotBlank
     private String email;
     @NotBlank

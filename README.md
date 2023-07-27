@@ -31,6 +31,7 @@ https://github.com/BizinMitya/front-react-avito/tree/v1.13
     - Spring Security
     - Swagger
     - Lombok
+    - mapstruct
 * **Работа БД**:
     - Mongo DB
 
