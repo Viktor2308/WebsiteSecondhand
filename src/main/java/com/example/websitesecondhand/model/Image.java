@@ -1,17 +1,21 @@
 package com.example.websitesecondhand.model;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import org.bson.types.Binary;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import lombok.*;
+import org.hibernate.annotations.Type;
 
-@Document(collection = "image")
-@Getter
-@Setter
+import javax.persistence.*;
+
+@Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "image")
 public class Image {
+
     @Id
     private String id;
-    private Binary image;
+
+    @Lob
+    @Type(type = "org.hibernate.type.BinaryType")
+    private byte[] image;
 }

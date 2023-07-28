@@ -1,10 +1,10 @@
 package com.example.websitesecondhand.repository;
 
 import com.example.websitesecondhand.model.User;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
-public interface UserRepository extends MongoRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findUserByUsername(String userName);
     Boolean existsByUsername(String username);
 

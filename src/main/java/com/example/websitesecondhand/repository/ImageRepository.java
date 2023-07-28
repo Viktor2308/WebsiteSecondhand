@@ -1,7 +1,7 @@
 package com.example.websitesecondhand.repository;
 
 import com.example.websitesecondhand.model.Image;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ImageRepository extends MongoRepository<Image,String> {
+public interface ImageRepository extends JpaRepository<Image,String> {
 }

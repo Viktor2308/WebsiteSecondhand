@@ -1,64 +1,49 @@
 package com.example.websitesecondhand.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.Collections;
+import javax.persistence.*;
+import java.util.*;
 
-@Document(collection = "users")
+@Entity
 @Getter
 @Setter
-@EqualsAndHashCode
 @NoArgsConstructor
+@Table(name = "users")
 public class User implements UserDetails {
-    @Transient
-    public static final String SEQUENCE_NAME = "users_sequence";
     @Id
-    private long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    @Column(length = 32, name = "user_name", nullable = false)
     private String username;
-    private String email;
-    @JsonIgnore
+    @Column(name = "password", length = 250, nullable = false)
     private String password;
-    private String firstName;
-    private String lastName;
-    private String phone;
+    @Column(name = "role", length = 5, nullable = false)
+    @Enumerated(EnumType.STRING)
     private Role role;
-    private String image;
-    private Collection<Ads> adsCollections;
-    private Collection<Comment> commentsCollections;
-    public User(long id, String username, String email, String password,
-                Role role) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.role = role;
-    }
-
+    @Column(name = "first_name", length = 32)
+    private String firstName;
+    @Column(name = "last_name", length = 32)
+    private String lastName;
+    @Column(name = "phone", length = 18)
+    private String phone;
+    @OneToOne()
+    @JoinColumn(name = "image_id")
+    private Image image;
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Ads> ads = new ArrayList<>();
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
+    private List<Comment> comments = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(role);
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public String getUsername() {
-        return username;
+        Set<Role> roles = new HashSet<>();
+        roles.add(this.role);
+        return roles;
     }
 
     @Override

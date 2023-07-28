@@ -29,6 +29,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final ImageService imageService;
+    private final UserMapper userMapper;
 
 
     @Override
@@ -72,15 +73,20 @@ public class UserServiceImpl implements UserService {
     public UserDto getUserDto(Authentication authentication) {
         User user = userRepository.findUserByUsername(authentication.getName()).orElseThrow(() ->
                 new UsernameNotFoundException("User doesn't exist"));
-        UserDto userDto = UserMapper.INSTANCE.userToUserDto(user);
+        UserDto userDto = userMapper.userToUserDto(user);
         log.info("User DTO: {}", userDto.toString());
         return userDto;
     }
 
     @Override
     public UserDto updateUserDto(UserDto userDto) {
-        userRepository.save(UserMapper.INSTANCE.userDtoToUser(userDto));
-        return userDto;
+        User user = userRepository.findUserByUsername(userDto.getEmail()).orElseThrow(() ->
+                new UsernameNotFoundException("User doesn't exist"));
+        user.setFirstName(userDto.getFirstName());
+        user.setLastName(userDto.getLastName());
+        user.setPhone(userDto.getPhone());
+        userRepository.save(user);
+        return userMapper.userToUserDto(user);
     }
 
     @Override
@@ -93,7 +99,7 @@ public class UserServiceImpl implements UserService {
         } else {
             newImage = imageService.updateImage(file, user.getImage());
         }
-        user.setImage(newImage.getId());
+        user.setImage(newImage);
         userRepository.save(user);
     }
 }

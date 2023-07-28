@@ -1,22 +1,28 @@
 package com.example.websitesecondhand.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import lombok.*;
 
-import java.time.LocalDateTime;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
-@Document(collection = "comment")
+@Entity
+@Table(name = "comments")
+@NoArgsConstructor
+@EqualsAndHashCode
+@AllArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
 public class Comment {
+
     @Id
-    private long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+    @NotNull
+    private Long createdAt;
+    @NotNull
     private String text;
-    private User author;
+    @ManyToOne()
     private Ads ads;
-    private LocalDateTime createdAt;
+    @ManyToOne()
+    private User author;
 }

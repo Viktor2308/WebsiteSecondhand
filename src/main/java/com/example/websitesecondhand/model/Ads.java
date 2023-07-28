@@ -1,28 +1,29 @@
 package com.example.websitesecondhand.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
-import org.springframework.data.mongodb.core.mapping.Document;
+import lombok.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import javax.persistence.*;
 
-@Document(collection = "ads")
+@Entity
+@Table(name = "ads")
+@NoArgsConstructor
+@EqualsAndHashCode
+@AllArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
 public class Ads {
-    @Transient
-    public static final String SEQUENCE_NAME = "ads_sequence";
+
     @Id
-    private long id;
-    private User author;
-    private Image image;
-    private int price;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
     private String title;
     private String description;
-    private Collection<Comment> comments = new ArrayList<>();
+    private int price;
+
+    @ManyToOne()
+    private User author;
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "image")
+    private Image image;
 }

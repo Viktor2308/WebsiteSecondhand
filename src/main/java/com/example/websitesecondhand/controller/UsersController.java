@@ -64,8 +64,10 @@ public class UsersController {
     @ApiResponse(responseCode = "401", description = "Unauthorized")
     @PatchMapping("/users/me")
     public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto) {
-        userService.updateUserDto(userDto);
-        return ResponseEntity.ok().body(userDto);
+        UserDto user = userService.updateUserDto(userDto);
+        return user != null
+                ? ResponseEntity.ok(user)
+                : new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
     @Operation(summary = "Update avatar authorize user")
@@ -85,7 +87,7 @@ public class UsersController {
     @Operation(summary = "Get avatar")
     @ApiResponse(responseCode = "200", description = "OK")
     @ApiResponse(responseCode = "404", description = "Not found", content = @Content())
-    @GetMapping(value = "/users/{id}/image", produces = {
+    @GetMapping(value = "/users/image/{id}", produces = {
             MediaType.IMAGE_PNG_VALUE,
             MediaType.IMAGE_JPEG_VALUE,
             MediaType.APPLICATION_OCTET_STREAM_VALUE,

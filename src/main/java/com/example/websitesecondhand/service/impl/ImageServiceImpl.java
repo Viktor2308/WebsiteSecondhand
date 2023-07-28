@@ -5,8 +5,6 @@ import com.example.websitesecondhand.model.Image;
 import com.example.websitesecondhand.repository.ImageRepository;
 import com.example.websitesecondhand.service.ImageService;
 import lombok.RequiredArgsConstructor;
-import org.bson.BsonBinarySubType;
-import org.bson.types.Binary;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,7 +21,7 @@ public class ImageServiceImpl implements ImageService {
         Image newImage = new Image();
         try{
             byte[] bytes = image.getBytes();
-            newImage.setImage(new Binary(BsonBinarySubType.BINARY, bytes));
+            newImage.setImage(bytes);
         } catch (IOException e){
             e.printStackTrace();
         }
@@ -32,21 +30,20 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public Image updateImage(MultipartFile newImage, String oldImageID) {
-        Image oldImage = repository.findById(oldImageID).orElseThrow(() -> new ImageException("Image exception"));
+    public Image updateImage(MultipartFile newImage, Image oldImage) {
         try {
             byte[] bytes = newImage.getBytes();
-            oldImage.setImage(new Binary(BsonBinarySubType.BINARY, bytes));
+            oldImage.setImage(bytes);
         }catch (IOException e){
             e.printStackTrace();
         }
-        return repository.save(oldImage);
+        return repository.saveAndFlush(oldImage);
     }
 
     @Override
     public byte[] getImage(String id) {
         Image image = repository.findById(id).orElseThrow(() -> new ImageException("Image exception"));
-        return image.getImage().getData();
+        return image.getImage();
     }
 }
 

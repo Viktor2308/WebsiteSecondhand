@@ -33,6 +33,6 @@ https://github.com/BizinMitya/front-react-avito/tree/v1.13
     - Lombok
     - mapstruct
 * **Работа БД**:
-    - Mongo DB
+    - PostgreSQL
 
 

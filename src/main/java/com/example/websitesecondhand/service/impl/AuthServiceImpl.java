@@ -1,6 +1,5 @@
 package com.example.websitesecondhand.service.impl;
 
-import com.example.websitesecondhand.MongoUtil.SequenceGeneratorService;
 import com.example.websitesecondhand.dto.LoginReqDto;
 import com.example.websitesecondhand.dto.MessageResponse;
 import com.example.websitesecondhand.dto.RegisterReqDto;
@@ -23,7 +22,6 @@ public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
-    private final SequenceGeneratorService sequenceGeneratorService;
 
     @Override
     public boolean authenticateUser(LoginReqDto loginReqDto) {
@@ -42,7 +40,6 @@ public class AuthServiceImpl implements AuthService {
                     .body(new MessageResponse("Error: Username is already taken!"));
         }
         User user = new User();
-        user.setId(sequenceGeneratorService.generateSequence(User.SEQUENCE_NAME));
         user.setUsername(registerReqDTO.getUsername());
         user.setPassword(encoder.encode(registerReqDTO.getPassword()));
         user.setFirstName(registerReqDTO.getFirstName());

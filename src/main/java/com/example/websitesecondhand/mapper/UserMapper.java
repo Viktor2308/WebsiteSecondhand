@@ -8,25 +8,20 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.factory.Mappers;
-
-@Mapper(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+@Mapper(componentModel = "spring")
 public interface UserMapper {
-
-    UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
     @Mapping(source = "username", target = "email")
     @Mapping(target = "image", source = "image", qualifiedByName = "imageMapper")
     UserDto userToUserDto(User user);
+
     @Named("imageMapper")
-    default String imageToString(String image) {
+    default String imageToString(Image image) {
         return image != null
-                ? "/users/" + image + "/image"
+                ? "/users/image/" + image.getId()
                 : null;
     }
 
-    @Mapping(source = "email", target = "username")
-    @Mapping(target = "image", ignore = true)
-    @Mapping(target = "role", ignore = true)
-    User userDtoToUser(UserDto userDto);
+
 
 }

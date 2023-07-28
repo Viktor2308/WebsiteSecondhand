@@ -7,6 +7,7 @@ import com.example.websitesecondhand.mapper.CommentMapper;
 import com.example.websitesecondhand.model.Ads;
 import com.example.websitesecondhand.model.Comment;
 import com.example.websitesecondhand.repository.AdsRepository;
+import com.example.websitesecondhand.repository.CommentRepository;
 import com.example.websitesecondhand.service.CommentService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,20 +15,21 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class CommentServiceImpl implements CommentService {
 
-    private final AdsRepository adsRepository;
+    private final CommentRepository commentRepository;
+    private final CommentMapper commentMapper;
     @Override
     public ResponseWrapperCommentDto getComments(int adsId) {
-        Ads ads = adsRepository.findById((long) adsId).orElseThrow(AdsNotFoundException::new);
-        Collection<Comment> commentList = ads.getComments();
-        List<CommentDto> commentDtoList = new ArrayList<>();
-        for (Comment comment : commentList) {
-            commentDtoList.add(CommentMapper.INSTANCE.mapToCommentDto(comment));
-        }
+             List<CommentDto> commentDtoList = commentRepository.findAllByAdsId((long)adsId)
+                     .stream()
+                     .map(commentMapper::commentToDto)
+                     .collect(Collectors.toList());
+
         return new ResponseWrapperCommentDto(commentDtoList.size(), commentDtoList);
     }
 
