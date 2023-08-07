@@ -6,8 +6,6 @@ import com.example.websitesecondhand.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
-import org.mapstruct.NullValuePropertyMappingStrategy;
-import org.mapstruct.factory.Mappers;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
@@ -18,7 +16,7 @@ public interface UserMapper {
     @Named("imageMapper")
     default String imageToString(Image image) {
         return image != null
-                ? "/users/image/" + image.getId()
+                ? "/users/" + image.getId() +"/image/"
                 : null;
     }
 

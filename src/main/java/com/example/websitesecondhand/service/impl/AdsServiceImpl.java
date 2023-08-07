@@ -4,16 +4,30 @@ import com.example.websitesecondhand.dto.AdsDto;
 import com.example.websitesecondhand.dto.CreateAdsDto;
 import com.example.websitesecondhand.dto.FullAdsDto;
 import com.example.websitesecondhand.dto.ResponseWrapperAdsDto;
+import com.example.websitesecondhand.mapper.AdsMapper;
+import com.example.websitesecondhand.repository.AdsRepository;
 import com.example.websitesecondhand.service.AdsService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
+@AllArgsConstructor
 public class AdsServiceImpl implements AdsService {
+
+    private final AdsRepository adsRepository;
+    private final AdsMapper adsMapper;
 
     @Override
     public ResponseWrapperAdsDto getAllAdsDto() {
-        return null;
+        List<AdsDto> ads = adsRepository.findAllByOrderByIdDesc()
+                .stream()
+                .map(adsMapper::toDto)
+                .collect(Collectors.toList());
+        return new ResponseWrapperAdsDto(ads.size(), ads);
     }
 
     @Override
